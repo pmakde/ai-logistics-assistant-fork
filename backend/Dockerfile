@@ -24,9 +24,6 @@ RUN pip install --no-cache-dir -r req.txt
 # Copy the rest of the application code
 COPY . .
 
-# 🚀 FINAL FIX: Build the index from the JSON file during the Docker build
-RUN python vector_store.py
-
 # Expose the port Hugging Face Spaces expects
 EXPOSE 7860
 
