@@ -2,8 +2,10 @@
 langchain==1.2.8
 langchain-community==0.4.1
 langchain-core==1.2.8
-langchain-text-splitters==1.1.0
-langsmith==0.6.8
+langgraph==1.0.9
+langchain-text-splitters
+langsmith
+
 
 # --- Google Gemini & Agents ---
 langchain-google-genai==4.2.0
