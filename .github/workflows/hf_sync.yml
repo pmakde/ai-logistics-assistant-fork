@@ -21,8 +21,14 @@ jobs:
           # 1. Create a local branch that only contains the 'backend' folder
           git subtree split --prefix backend -b hf-sync-branch
           
-          # 2. Force push THAT branch directly to the Hugging Face 'main' branch
-          git push https://kushagramkhare:${HF_TOKEN}@huggingface.co/spaces/kushagramkhare/institute_RAG_assistant hf-sync-branch:main --force
+          # 2. Add the Hugging Face remote (if not already there)
+          git remote add space-remote https://kushagramkhare:${HF_TOKEN}@huggingface.co/spaces/kushagramkhare/institute_RAG_assistant || git remote set-url space-remote https://kushagramkhare:${HF_TOKEN}@huggingface.co/spaces/kushagramkhare/institute_RAG_assistant
+          
+          # 3. CRUCIAL: Push the actual LFS blobs to the Hugging Face storage
+          git lfs push space-remote hf-sync-branch
+          
+          # 4. Force push the branch pointer
+          git push space-remote hf-sync-branch:main --force
 
 
 
