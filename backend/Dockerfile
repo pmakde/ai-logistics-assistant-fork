@@ -4,10 +4,14 @@ FROM python:3.11-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Install system dependencies (needed for FAISS and PDF processing)
+# Install system dependencies (needed for Git LFS, AI support, OCR, and PDFs)
 RUN apt-get update && apt-get install -y \
-    build-essential \
+    git \
+    git-lfs \
+    libgl1-mesa-glx \
+    poppler-utils \
     tesseract-ocr \
+    && git lfs install \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements file first for caching
