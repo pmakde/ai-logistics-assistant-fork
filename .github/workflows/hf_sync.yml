@@ -1,34 +1,42 @@
 name: Sync to Hugging Face hub
+
 on:
   push:
     branches: [main]
 
-  # Allow manual trigger from the Actions tab
   workflow_dispatch:
 
 jobs:
   sync-to-hub:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
           lfs: true
+
+      # ensure ALL LFS files are downloaded locally
+      - name: Pull LFS files
+        run: |
+          git lfs install
+          git lfs fetch --all
+          git lfs checkout
+
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
-          # 1. Create a local branch that only contains the 'backend' folder
+
+          # create branch with only backend folder
           git subtree split --prefix backend -b hf-sync-branch
-          
-          # 2. Add the Hugging Face remote (if not already there)
-          git remote add space-remote https://kushagramkhare:${HF_TOKEN}@huggingface.co/spaces/kushagramkhare/institute_RAG_assistant || git remote set-url space-remote https://kushagramkhare:${HF_TOKEN}@huggingface.co/spaces/kushagramkhare/institute_RAG_assistant
-          
-          # 3. CRUCIAL: Push the actual LFS blobs to the Hugging Face storage
-          git lfs push space-remote hf-sync-branch
-          
-          # 4. Force push the branch pointer
+
+          # add HF remote
+          git remote add space-remote https://kushagramkhare:${HF_TOKEN}@huggingface.co/spaces/kushagramkhare/institute_RAG_assistant || \
+          git remote set-url space-remote https://kushagramkhare:${HF_TOKEN}@huggingface.co/spaces/kushagramkhare/institute_RAG_assistant
+
+          # push actual LFS blobs
+          git lfs push space-remote --all
+
+          # push commit history
           git push space-remote hf-sync-branch:main --force
-
-
-
