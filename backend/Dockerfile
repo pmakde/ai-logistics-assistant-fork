@@ -24,15 +24,19 @@ RUN pip install --no-cache-dir -r req.txt
 # Copy the rest of the application code
 COPY . .
 
-# Verify that files are real (should be > 1KB, pointers are < 200 bytes)
-RUN echo "=== VERIFYING FILE SIZES (LFS Check) ===" && \
-    find . -name "*.faiss" -o -name "*.pkl" -o -name "*.json" | \
-    xargs ls -lh || echo "No large files found to check"
+# 🚀 FORCE LFS PULL: Turn pointers into real binaries
+RUN git init && \
+    git remote add origin https://huggingface.co/spaces/kushagramkhare/institute_RAG_assistant && \
+    git lfs install && \
+    git lfs pull && \
+    rm -rf .git
 
-# Check if the first 20 bytes of index.faiss start with "version" (which means it's a pointer)
-RUN head -c 100 backend/faiss_store/index.faiss | grep "version https" && \
-    echo "❌ ERROR: Found LFS pointer instead of real file!" && exit 1 || \
-    echo "✅ SUCCESS: Real binary file detected."
+# Verify that files are now REAL (should be > 1KB, pointers are < 200 bytes)
+RUN echo "=== VERIFYING FILE SIZES (LFS Check Post-Pull) ===" && \
+    ls -lh faiss_store/index.faiss && \
+    head -c 100 faiss_store/index.faiss | grep "version https" && \
+    echo "❌ Still an LFS pointer!" && exit 1 || \
+    echo "✅ Success: Real binary downloaded."
 
 # Expose the port Hugging Face Spaces expects
 EXPOSE 7860
