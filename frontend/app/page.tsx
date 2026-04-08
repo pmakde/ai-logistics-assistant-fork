@@ -26,7 +26,7 @@ export default function Home() {
     setInput("");
     setLoading(true);
 
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://127.0.0.1:7860";
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:7860";
     const response = await fetch(`${backendUrl}/chat`, {
       method: "POST",
       headers: {
