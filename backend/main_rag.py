@@ -41,7 +41,7 @@ retriever = vector_store.as_retriever(
 #as_retriever is a inbuilt langchain function
 
 model = ChatGoogleGenerativeAI( #LLM model used for query rewriting and giving final responses
-    model="gemini-2.5-flash",
+    model="gemini-2.5-flash-lite",
     temperature=0 #so that the model is deterministic and doesnt hallucinate
 )
 """
