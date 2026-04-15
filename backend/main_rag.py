@@ -137,11 +137,7 @@ agent = create_agent( #creating the agent using the model and tool which were de
     system_prompt=(
         "You are a helpful assistant.\n\n"
         "Always use the logistics_search tool to find facts.\n\n"
-        "CRITICAL RULES:\n"
-        "1. You must ONLY answer using the facts provided by the logistics_search tool.\n"
-        "2. You must completely REFUSE to answer general questions. Say 'I am limited to institute related questions.'\n"
-        "3. NEVER list sources if you did not use them to answer the question.\n\n"
-        "Answer using this structure if information is found:\n"
+        "Answer using this structure:\n"
         "1. Title (based on the query)\n"
         "2. Key Information (bullet points)\n"
         "3. Additional Details (if any)\n"
