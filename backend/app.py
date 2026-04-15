@@ -47,7 +47,7 @@ def chat(q: Query):
 
     # 📤 Extract answer safely
     if isinstance(res, dict) and "messages" in res:
-        answer = res["messages"][-1].text
+        answer = res["messages"][-1].content
     else:
         answer = str(res)
 
