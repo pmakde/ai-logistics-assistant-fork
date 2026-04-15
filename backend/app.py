@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+# CORS (keep as is)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -14,31 +15,36 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-chat_sessions = {}
-
+# Request model
 class Query(BaseModel):
     question: str
-    history: list = []
-    session_id: str
+    history: list = []   # coming from frontend
+
 
 @app.get("/")
 def home():
     return {"message": "AI Logistics Assistant API is running"}
 
+
 @app.post("/chat")
 def chat(q: Query):
 
-    if q.session_id not in chat_sessions:
-        chat_sessions[q.session_id] = []
+    messages = []
 
-    messages = chat_sessions[q.session_id]
+    # 🔁 Convert frontend history → LangChain messages
+    for msg in q.history:
+        if msg["role"] == "user":
+            messages.append(HumanMessage(content=msg["content"]))
+        elif msg["role"] == "assistant":
+            messages.append(AIMessage(content=msg["content"]))
 
+    # ➕ Add current user question
     messages.append(HumanMessage(content=q.question))
 
+    # 🤖 Call your RAG agent
     res = agent.invoke({"messages": messages})
 
+    # 📤 Extract answer
     answer = res["messages"][-1].text
-
-    messages.append(AIMessage(content=answer))
 
     return {"answer": answer}
